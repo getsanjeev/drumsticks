@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/welcome_message_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="#036e64"
+        android:orientation="vertical"
+        android:layout_margin="16dp"
+        android:padding="16dp"
+        android:visibility="visible">
+
+        <TextView
+            android:id="@+id/welcome_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:layout_marginTop="16dp"
+            android:text="Welcome to Drumsticks"
+            android:textColor="#ddd"
+            android:textSize="28sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/welcome_messgae"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/welcome_title"
+            android:text="Bringing the drumming experience from soundproof studios to the outdoors, your sofa, or any other place you have a smartphone."
+            android:textColor="#ddd"
+            android:textSize="18sp" />
+
+        <Button
+            android:id="@+id/gotit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_gravity="bottom"
+            android:background="#3b978d"
+            android:paddingLeft="30dp"
+            android:paddingRight="30dp"
+            android:text="Got It"
+            android:textColor="#fff" />
+    </RelativeLayout>
+
+</RelativeLayout>
