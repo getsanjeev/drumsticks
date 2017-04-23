@@ -13,7 +13,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ListView;
 
 import java.util.Set;
@@ -21,16 +20,8 @@ import java.util.Vector;
 
 public class availableDeviceList extends AppCompatActivity {
 
-    int PID;
-    int size2;
-    private String[] comments;
-    private String[] times;
-    private String[] names;
-    private Bitmap[] dps;
     Button searchAllDevices;
     ListView lv;
-    EditText comment_box;
-    public static final String ROOT_URL = "http://getsanjeev.esy.es";
     BluetoothAdapter mBluetoothAdapter;
     Bitmap symbolBluetooth;
     Vector<String> searchListResults;
@@ -51,8 +42,20 @@ public class availableDeviceList extends AppCompatActivity {
                 mBluetoothAdapter.startDiscovery();
                 IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
                 registerReceiver(mReceiver, filter);
+                showAllDevices();
             }
         });
+    }
+
+    private void showAllDevices(){
+        String [] listResult = new String [searchListResults.size()];
+        int i = 0;
+        for (String item : searchListResults){
+            listResult[i] = item;
+            i++;
+        }
+        customAdapter myAdapter = new customAdapter(this,listResult,symbolBluetooth);
+        lv.setAdapter(myAdapter);
     }
 
     private void showCurrentDevices(){
@@ -82,6 +85,7 @@ public class availableDeviceList extends AppCompatActivity {
                 String deviceName = device.getName() + " " + device.getAddress();
                 searchListResults.add(deviceName);
             }
+
         }
     };
 }
