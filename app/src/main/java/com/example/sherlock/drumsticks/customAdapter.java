@@ -35,4 +35,7 @@ public class customAdapter extends ArrayAdapter<String>
         imageView.setImageBitmap(imageId);
         return rowView;
     }
+
+
+
 }

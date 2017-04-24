@@ -7,17 +7,35 @@
     android:layout_marginBottom="10dp"
     android:layout_marginRight="10dp">
 
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:layout_alignParentTop="true"
+    android:id="@+id/ly">
     <Button
-        android:layout_alignParentTop="true"
         android:id="@+id/search_devices"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:background="#3b978d"
         android:text="Search Devices"
+        android:textColor="#fff"
+        android:layout_marginLeft="40dp"
+        />
+    <Button
+        android:id="@+id/create_server"
+        android:layout_marginLeft="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="#3b978d"
+        android:text="Create Server"
         android:textColor="#fff" />
+</LinearLayout>
 
         <ListView
+            android:layout_below="@id/ly"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/listView_in_cominfo"

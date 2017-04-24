@@ -3,6 +3,7 @@ package com.example.sherlock.drumsticks;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
+import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -12,6 +13,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 
@@ -21,6 +23,7 @@ import java.util.Vector;
 public class availableDeviceList extends AppCompatActivity {
 
     Button searchAllDevices;
+    Button createServer;
     ListView lv;
     BluetoothAdapter mBluetoothAdapter;
     Bitmap symbolBluetooth;
@@ -33,7 +36,20 @@ public class availableDeviceList extends AppCompatActivity {
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         searchListResults = new Vector<>();
         lv = (ListView) findViewById(R.id.listView_in_cominfo);
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                String lv.getAdapter().getItem(position);
+            }
+        });
         searchAllDevices = (Button) findViewById(R.id.search_devices);
+        createServer = (Button) findViewById(R.id.create_server);
+        createServer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new bluetoothConnectionUtility(mBluetoothAdapter).start();
+            }
+        });
         symbolBluetooth = BitmapFactory.decodeResource(getResources(), R.drawable.bluetooth);
         showCurrentDevices();
         searchAllDevices.setOnClickListener(new View.OnClickListener() {
@@ -47,26 +63,28 @@ public class availableDeviceList extends AppCompatActivity {
         });
     }
 
-    private void showAllDevices(){
-        String [] listResult = new String [searchListResults.size()];
+
+    private void showAllDevices() {
+        String[] listResult = new String[searchListResults.size()];
         int i = 0;
-        for (String item : searchListResults){
+        for (String item : searchListResults) {
             listResult[i] = item;
             i++;
         }
-        customAdapter myAdapter = new customAdapter(this,listResult,symbolBluetooth);
+        customAdapter myAdapter = new customAdapter(this, listResult, symbolBluetooth);
         lv.setAdapter(myAdapter);
     }
 
-    private void showCurrentDevices(){
-        String [] savedDevices = querySavedDevice();
-        customAdapter myAdapter = new customAdapter(this,savedDevices,symbolBluetooth);
+
+    private void showCurrentDevices() {
+        String[] savedDevices = querySavedDevice();
+        customAdapter myAdapter = new customAdapter(this, savedDevices, symbolBluetooth);
         lv.setAdapter(myAdapter);
     }
 
-    private String[] querySavedDevice(){
+    private String[] querySavedDevice() {
         Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
-        String [] savedDevices = new String[pairedDevices.size()];
+        String[] savedDevices = new String[pairedDevices.size()];
         int i = 0;
         if (pairedDevices.size() > 0) {
             for (BluetoothDevice device : pairedDevices) {
@@ -76,6 +94,7 @@ public class availableDeviceList extends AppCompatActivity {
         }
         return savedDevices;
     }
+
 
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
