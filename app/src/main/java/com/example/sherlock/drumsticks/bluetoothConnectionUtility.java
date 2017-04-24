@@ -5,6 +5,8 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.util.Log;
+import android.widget.Toast;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -22,12 +24,14 @@ public class bluetoothConnectionUtility extends Thread {
     private final BluetoothServerSocket mmServerSocket;
     private static final String TAG = "MY_APP_DEBUG_TAG";
     public static char inputValue;
+    public static int connectionStatus;
     UUID DEFAULT_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     private Handler mHandler;
 
     public bluetoothConnectionUtility(BluetoothAdapter mBluetoothAdapter) {
         // Use a temporary object that is later assigned to mmServerSocket
         // because mmServerSocket is final.
+        inputValue = 'x';
         BluetoothServerSocket tmp = null;
         try {
             // MY_UUID is the app's UUID string, also used by the client code.
@@ -45,6 +49,7 @@ public class bluetoothConnectionUtility extends Thread {
         while (true) {
             try {
                 Log.e("b4","socket accepting");
+                connectionStatus = 0;
                 socket = mmServerSocket.accept();
                 Log.e("waiting to accept",socket.toString());
             } catch (IOException e) {
@@ -93,38 +98,29 @@ public class bluetoothConnectionUtility extends Thread {
     private class ConnectedThread extends Thread {
         private final BluetoothSocket mmSocket;
         private final InputStream mmInStream;
-        private final OutputStream mmOutStream;
         private byte[] mmBuffer; // mmBuffer store for the stream
 
         public ConnectedThread(BluetoothSocket socket) {
             mmSocket = socket;
             InputStream tmpIn = null;
             OutputStream tmpOut = null;
-
+            Log.e("CONNECTED SUccessfULLY",socket.toString());
+            connectionStatus = 1;
             // Get the input and output streams; using temp objects because
             // member streams are final.
             try {
                 tmpIn = socket.getInputStream();
-                Log.e("inputstream",tmpIn.toString());
             }
 
             catch (IOException e) {
+                e.printStackTrace();
             }
-
-            try {
-                tmpOut = socket.getOutputStream();
-            }
-
-            catch (IOException e) {
-            }
-
             mmInStream = tmpIn;
-            mmOutStream = tmpOut;
         }
 
         public void run() {
             mmBuffer = new byte[1024];
-
+            connectionStatus = 5;
             int numBytes; // bytes returned from read()
             // Keep listening to the InputStream until an exception occurs.
             while (true) {
@@ -134,6 +130,7 @@ public class bluetoothConnectionUtility extends Thread {
                     numBytes = mmInStream.read(mmBuffer);
                     String myInput = new String(mmBuffer);
                     inputValue = myInput.charAt(0);
+                    Log.e("inputValue", Character.toString(inputValue));
                     Log.e("RECIEVED", Integer.toString(numBytes));
 
                 } catch (IOException e) {
@@ -147,6 +144,8 @@ public class bluetoothConnectionUtility extends Thread {
         public void cancel() {
             try {
                 mmSocket.close();
+                Log.e("HERE IT IS CALLE","remove");
+                connectionStatus = 0;
             } catch (IOException e) {
                 Log.e(TAG, "Could not close the connect socket", e);
             }
