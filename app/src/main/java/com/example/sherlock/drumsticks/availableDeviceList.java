@@ -12,6 +12,7 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -47,6 +48,7 @@ public class availableDeviceList extends AppCompatActivity {
         createServer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.e("CLicked create server","HEYYY");
                 new bluetoothConnectionUtility(mBluetoothAdapter).start();
             }
         });
