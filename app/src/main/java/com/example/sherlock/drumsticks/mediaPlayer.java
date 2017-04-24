@@ -38,21 +38,32 @@ public class mediaPlayer extends AppCompatActivity {
                 try{
                     loopController = 1;
                     while (loopController==1){
-                        mp.setDataSource("storage/sdcard0/SHAREit/audios/papercut.mp3");
-                        mp.prepare();
-                        mp.start();
+                        if(bluetoothConnectionUtility.inputValue == 'c'){
+                            mp.create(getBaseContext(),R.raw.crash);
+                            myTextView.setText("c");
+                            mp.start();
+                        }
+                        else if(bluetoothConnectionUtility.inputValue == 'h'){
+                            mp.create(getBaseContext(),R.raw.hithat);
+                            myTextView.setText("h");
+                            mp.start();
+                        }
+                        else {
+                            mp.create(getBaseContext(),R.raw.snare);
+                            myTextView.setText("s");
+                            mp.start();
+                        }
                     }
                 }
-                catch (IOException e){
+                catch (Exception e){
                     e.getStackTrace();
                 }
-
             }
         });
         exitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                
+
             }
         });
 
