@@ -15,23 +15,16 @@
     android:id="@+id/ly">
     <Button
         android:id="@+id/search_devices"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:background="#3b978d"
         android:text="Search Devices"
         android:textColor="#fff"
-        android:layout_marginLeft="40dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
         />
-    <Button
-        android:id="@+id/create_server"
-        android:layout_marginLeft="10dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:background="#3b978d"
-        android:text="Create Server"
-        android:textColor="#fff" />
+
 </LinearLayout>
 
         <ListView
@@ -42,4 +35,17 @@
             android:layout_marginTop="20dp"
             android:paddingBottom="10dp"
             />
+
+    <Button
+        android:layout_marginBottom="20dp"
+        android:id="@+id/create_server"
+        android:layout_marginLeft="20dp"
+        android:layout_width="match_parent"
+        android:layout_marginRight="20dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/listView_in_cominfo"
+        android:layout_gravity="bottom"
+        android:background="#3b978d"
+        android:text="PLay Drumsticks"
+        android:textColor="#fff" />
 </RelativeLayout>

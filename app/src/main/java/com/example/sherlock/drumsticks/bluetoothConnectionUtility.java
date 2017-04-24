@@ -9,17 +9,19 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.channels.ByteChannel;
+import java.util.Arrays;
 import java.util.UUID;
 import java.util.logging.Handler;
 
 /**
  * Created by sherlock on 24/4/17.
  */
+
+
 public class bluetoothConnectionUtility extends Thread {
     private final BluetoothServerSocket mmServerSocket;
     private static final String TAG = "MY_APP_DEBUG_TAG";
     UUID DEFAULT_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
-
     private Handler mHandler;
 
     public bluetoothConnectionUtility(BluetoothAdapter mBluetoothAdapter) {
@@ -41,19 +43,23 @@ public class bluetoothConnectionUtility extends Thread {
         // Keep listening until exception occurs or a socket is returned.
         while (true) {
             try {
+                Log.e("b4","socket accepting");
                 socket = mmServerSocket.accept();
-                Log.e("waititngto accept",socket.toString());
+                Log.e("waiting to accept",socket.toString());
             } catch (IOException e) {
-                Log.e(TAG, "Socket's accept() method failed", e);
+                Log.e("in IO",e.toString());
+                e.getStackTrace();
                 break;
             }
 
             if (socket != null) {
                 // A connection was accepted. Perform work associated with
                 // the connection in a separate thread.
+                Log.e("socket not null","start");
                 new ConnectedThread(socket).start();
                 try {
                     mmServerSocket.close();
+                    Log.e("closed socket","hqwert");
                 }
                 catch (IOException e){
                     e.getStackTrace();
@@ -116,6 +122,7 @@ public class bluetoothConnectionUtility extends Thread {
         }
 
         public void run() {
+            StringBuilder mystring = new StringBuilder();
             mmBuffer = new byte[1024];
             int numBytes; // bytes returned from read()
             // Keep listening to the InputStream until an exception occurs.
@@ -124,6 +131,7 @@ public class bluetoothConnectionUtility extends Thread {
                     Log.e("Listening to ports","HELLO");
                     // Read from the InputStream.
                     numBytes = mmInStream.read(mmBuffer);
+                    Log.e("receiving", Arrays.toString(mmBuffer));
                     Log.e("RECIEVED", Integer.toString(numBytes));
 
                     // Send the obtained bytes to the UI activity.
