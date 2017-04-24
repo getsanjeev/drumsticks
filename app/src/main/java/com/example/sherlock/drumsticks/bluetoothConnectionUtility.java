@@ -21,6 +21,7 @@ import java.util.logging.Handler;
 public class bluetoothConnectionUtility extends Thread {
     private final BluetoothServerSocket mmServerSocket;
     private static final String TAG = "MY_APP_DEBUG_TAG";
+    public static char inputValue;
     UUID DEFAULT_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     private Handler mHandler;
 
@@ -122,8 +123,8 @@ public class bluetoothConnectionUtility extends Thread {
         }
 
         public void run() {
-            StringBuilder mystring = new StringBuilder();
             mmBuffer = new byte[1024];
+
             int numBytes; // bytes returned from read()
             // Keep listening to the InputStream until an exception occurs.
             while (true) {
@@ -131,14 +132,9 @@ public class bluetoothConnectionUtility extends Thread {
                     Log.e("Listening to ports","HELLO");
                     // Read from the InputStream.
                     numBytes = mmInStream.read(mmBuffer);
-                    Log.e("receiving", Arrays.toString(mmBuffer));
+                    String myInput = new String(mmBuffer);
+                    inputValue = myInput.charAt(0);
                     Log.e("RECIEVED", Integer.toString(numBytes));
-
-                    // Send the obtained bytes to the UI activity.
-                    /*Notification.MessagingStyle.Message readMsg = mHandler.obtainMessage(
-                            MessageConstants.MESSAGE_READ, numBytes, -1,
-                            mmBuffer);*/
-                    /*readMsg.sendToTarget();*/
 
                 } catch (IOException e) {
                     Log.d(TAG, "Input stream was disconnected", e);

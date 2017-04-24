@@ -36,7 +36,22 @@
         android:paddingRight="20dp"
         android:text="Play MyDrumsticks"
         android:textSize="20dp"
+        android:textColor="#fff" />
 
+
+    <Button
+        android:id="@+id/exit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_gravity="bottom"
+        android:background="#5a938c"
+        android:paddingLeft="30dp"
+        android:paddingRight="20dp"
+        android:text="Exit DrumSticks"
+        android:textSize="20dp"
         android:textColor="#fff" />
 
 </LinearLayout>
