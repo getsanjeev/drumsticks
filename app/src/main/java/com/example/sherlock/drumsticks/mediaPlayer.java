@@ -4,7 +4,6 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
-import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -12,11 +11,11 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.UUID;
-import java.util.logging.Handler;
 
 /**
  * Created by sherlock on 24/4/17.
@@ -42,10 +41,7 @@ public class mediaPlayer extends AppCompatActivity {
             public void onClick(View v) {
                 mBluetoothConnectivityUtility = new bluetoothConnectionUtility(mBluetoothAdapter);
                 mBluetoothConnectivityUtility.start();
-                        Log.e("QWERTY","5555");
-                        playMusic myMusic = new playMusic();
-                        //myMusic.start();
-                        Log.e("music.sta","me");
+                Toast.makeText(mediaPlayer.this, "Bluetooth Socket Established", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -122,7 +118,6 @@ public class mediaPlayer extends AppCompatActivity {
         public  char inputValue;
         public int connectionStatus;
         UUID DEFAULT_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
-        private Handler mHandler;
 
         public bluetoothConnectionUtility(BluetoothAdapter mBluetoothAdapter) {
             // Use a temporary object that is later assigned to mmServerSocket
@@ -207,7 +202,7 @@ public class mediaPlayer extends AppCompatActivity {
 
             public void run() {
                 mmBuffer = new byte[1024];
-                int numBytes; // bytes returned from read()
+                int numBytes;// bytes returned from read()
                 // Keep listening to the InputStream until an exception occurs.
                 while (true) {
                     try {
@@ -218,7 +213,7 @@ public class mediaPlayer extends AppCompatActivity {
                         data.alpha = myInput.charAt(0);
                         mediaPlayer.play(myInput.charAt(0),mySoundPool);
                         Log.e("inputValue", Character.toString(data.alpha));
-                        Log.e("RECIEVED", Integer.toString(numBytes));
+                        Log.e("Received", Integer.toString(numBytes));
 
                     } catch (IOException e) {
                         Log.d(TAG, "Input stream was disconnected", e);
