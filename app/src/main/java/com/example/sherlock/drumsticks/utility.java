@@ -4,6 +4,7 @@ package com.example.sherlock.drumsticks;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -20,7 +21,7 @@ import java.util.logging.Handler;
  */
 
 
-public class bluetoothConnectionUtility extends Thread {
+public class utility extends Thread {
     private final BluetoothServerSocket mmServerSocket;
     private static final String TAG = "MY_APP_DEBUG_TAG";
     public static char inputValue;
@@ -28,7 +29,7 @@ public class bluetoothConnectionUtility extends Thread {
     UUID DEFAULT_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     private Handler mHandler;
 
-    public bluetoothConnectionUtility(BluetoothAdapter mBluetoothAdapter) {
+    public utility(BluetoothAdapter mBluetoothAdapter) {
         // Use a temporary object that is later assigned to mmServerSocket
         // because mmServerSocket is final.
         inputValue = 'x';
@@ -80,7 +81,6 @@ public class bluetoothConnectionUtility extends Thread {
     public void cancel() {
         try {
             mmServerSocket.close();
-            notify();
         } catch (IOException e) {
             Log.e(TAG, "Could not close the connect socket", e);
         }
@@ -100,7 +100,8 @@ public class bluetoothConnectionUtility extends Thread {
     private class ConnectedThread extends Thread {
         private final BluetoothSocket mmSocket;
         private final InputStream mmInStream;
-        private byte[] mmBuffer; // mmBuffer store for the stream
+        private byte[] mmBuffer;
+        private soundPool mySoundPool;// mmBuffer store for the stream
 
         public ConnectedThread(BluetoothSocket socket) {
             mmSocket = socket;
@@ -128,8 +129,9 @@ public class bluetoothConnectionUtility extends Thread {
                     // Read from the InputStream.
                     numBytes = mmInStream.read(mmBuffer);
                     String myInput = new String(mmBuffer);
-                    inputValue = myInput.charAt(0);
-                    Log.e("inputValue", Character.toString(inputValue));
+                    data.alpha = myInput.charAt(0);
+                    mediaPlayer.play(myInput.charAt(0),mySoundPool);
+                    Log.e("inputValue", Character.toString(data.alpha));
                     Log.e("RECIEVED", Integer.toString(numBytes));
 
                 } catch (IOException e) {
