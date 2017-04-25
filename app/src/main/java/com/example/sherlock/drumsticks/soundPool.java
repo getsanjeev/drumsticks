@@ -17,6 +17,7 @@ public class soundPool {
     public soundPool(Context pContext)
     {
         // setup Soundpool
+
         this.mShortPlayer = new SoundPool(4, AudioManager.STREAM_MUSIC, 0);
         mSounds.put(R.raw.crash, this.mShortPlayer.load(pContext, R.raw.crash, 1));
         mSounds.put(R.raw.hithat, this.mShortPlayer.load(pContext, R.raw.hithat, 1));

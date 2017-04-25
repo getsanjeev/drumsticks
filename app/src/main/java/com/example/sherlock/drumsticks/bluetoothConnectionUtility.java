@@ -62,6 +62,7 @@ public class bluetoothConnectionUtility extends Thread {
                 // A connection was accepted. Perform work associated with
                 // the connection in a separate thread.
                 Log.e("socket not null","start");
+                connectionStatus = 5;
                 new ConnectedThread(socket).start();
                 try {
                     mmServerSocket.close();
@@ -79,6 +80,7 @@ public class bluetoothConnectionUtility extends Thread {
     public void cancel() {
         try {
             mmServerSocket.close();
+            notify();
         } catch (IOException e) {
             Log.e(TAG, "Could not close the connect socket", e);
         }
@@ -103,9 +105,7 @@ public class bluetoothConnectionUtility extends Thread {
         public ConnectedThread(BluetoothSocket socket) {
             mmSocket = socket;
             InputStream tmpIn = null;
-            OutputStream tmpOut = null;
             Log.e("CONNECTED SUccessfULLY",socket.toString());
-            connectionStatus = 1;
             // Get the input and output streams; using temp objects because
             // member streams are final.
             try {
@@ -120,7 +120,6 @@ public class bluetoothConnectionUtility extends Thread {
 
         public void run() {
             mmBuffer = new byte[1024];
-            connectionStatus = 5;
             int numBytes; // bytes returned from read()
             // Keep listening to the InputStream until an exception occurs.
             while (true) {
@@ -145,7 +144,6 @@ public class bluetoothConnectionUtility extends Thread {
             try {
                 mmSocket.close();
                 Log.e("HERE IT IS CALLE","remove");
-                connectionStatus = 0;
             } catch (IOException e) {
                 Log.e(TAG, "Could not close the connect socket", e);
             }

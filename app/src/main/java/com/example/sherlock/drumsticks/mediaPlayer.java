@@ -39,6 +39,14 @@ public class mediaPlayer extends AppCompatActivity {
             public void onClick(View v) {
                 mBluetoothConnectivityUtility = new bluetoothConnectionUtility(mBluetoothAdapter);
                 mBluetoothConnectivityUtility.start();
+                synchronized (mBluetoothConnectivityUtility){
+                    try {
+                        mBluetoothConnectivityUtility.wait();
+                    }
+                    catch (InterruptedException e){
+                        e.printStackTrace();
+                    }
+                }
                 myMusic.start();
             }
         });
@@ -58,25 +66,18 @@ public class mediaPlayer extends AppCompatActivity {
     }
 
     private class playMusic extends Thread{
-        int loopController = 1;
         soundPool mySoundPoolPLayer = new soundPool(mediaPlayer.this);
         public void run(){
-            
-            while (loopController==1 ){
-
+            while (true){
                 Log.e("valueofmyinput",Integer.toString(bluetoothConnectionUtility.inputValue));
 
                 if(bluetoothConnectionUtility.inputValue == 'c'){
-                    myTextView.setText("crash");
                     mySoundPoolPLayer.playShortResource(R.raw.crash);
-
                 }
                 else if(bluetoothConnectionUtility.inputValue == 'h'){
-                    myTextView.setText("hithat");
                     mySoundPoolPLayer.playShortResource(R.raw.hithat);
                 }
-                else  {
-                    myTextView.setText("snare");
+                else if(bluetoothConnectionUtility.inputValue =='s'){
                     mySoundPoolPLayer.playShortResource(R.raw.snare);
                 }
             }
