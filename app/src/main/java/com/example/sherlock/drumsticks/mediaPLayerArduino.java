@@ -6,6 +6,7 @@ import android.bluetooth.BluetoothProfile;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -17,43 +18,23 @@ import android.widget.Toast;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
+import java.lang.reflect.Method;
 import java.util.Set;
 import java.util.UUID;
 
-/**
- * Created by sherlock on 24/4/17.
- */
 
-public class mediaPlayer extends AppCompatActivity {
-
+ public class mediaPLayerArduino extends AppCompatActivity {
     Button playButton;
     Button exitButton;
     TextView myTextView;
     BluetoothAdapter mBluetoothAdapter;
-    bluetoothConnectionUtility mBluetoothConnectivityUtility;
-    BluetoothProfile mBluetoothProfile;
+    BluetoothSocket bSocket;
+    private static UUID DEFAULT_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
+    private static String address = "00:15:FF:F2:19:5F";
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         setContentView(R.layout.play_drums);
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        mBluetoothProfile = new BluetoothProfile() {
-            @Override
-            public List<BluetoothDevice> getConnectedDevices() {
-                return null;
-            }
-
-            @Override
-            public List<BluetoothDevice> getDevicesMatchingConnectionStates(int[] states) {
-                return null;
-            }
-
-            @Override
-            public int getConnectionState(BluetoothDevice device) {
-                return 0;
-            }
-        };
-
         super.onCreate(savedInstanceState);
         playButton = (Button)findViewById(R.id.play);
         exitButton = (Button)findViewById(R.id.exit);
@@ -63,12 +44,30 @@ public class mediaPlayer extends AppCompatActivity {
             public void onClick(View v) {
                 Set bondedDevices =mBluetoothAdapter.getBondedDevices();
                 if(bondedDevices.isEmpty()){
-                    Toast.makeText(mediaPlayer.this, "Please connect to device first", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mediaPLayerArduino.this, "Please connect to device first", Toast.LENGTH_SHORT).show();
                 }
                 else {
-                    mBluetoothConnectivityUtility = new bluetoothConnectionUtility(mBluetoothAdapter);
-                    mBluetoothConnectivityUtility.start();
+                    BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(address);
+                    try{
+                        bSocket = createBluetoothSocket(device);
+                    }
+                    catch (IOException e){
+                        e.printStackTrace();
+                    }
+                    mBluetoothAdapter.cancelDiscovery();
+                    try{
+                        Log.e("Strted","CONNECT SOME DEVICE");
+                        bSocket.connect();
+                        new ConnectedThread(bSocket).start();
+                        Log.e("started","connected thread");
+                    }
+                    catch (IOException e){
+                        e.printStackTrace();
+                        try{bSocket.close();}
+                        catch (IOException e1){e1.printStackTrace();}
+                    }
                 }
+
             }
         });
 
@@ -77,9 +76,8 @@ public class mediaPlayer extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Log.e("clicked on","exitButton");
-                mBluetoothConnectivityUtility.cancel();
                 mBluetoothAdapter.disable();
-                startActivity(new Intent(mediaPlayer.this,blueToothConnection.class));
+                startActivity(new Intent(mediaPLayerArduino.this,blueToothConnection.class));
                 finish();
             }
         });
@@ -113,76 +111,20 @@ public class mediaPlayer extends AppCompatActivity {
 
     }
 
-
-    public class bluetoothConnectionUtility extends Thread {
-        private final BluetoothServerSocket mmServerSocket;
-        private static final String TAG = "MY_APP_DEBUG_TAG";
-        public  char inputValue;
-        public int connectionStatus;
-        UUID DEFAULT_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
-
-        public bluetoothConnectionUtility(BluetoothAdapter mBluetoothAdapter) {
-            // Use a temporary object that is later assigned to mmServerSocket
-            // because mmServerSocket is final.
-            inputValue = 'x';
-            BluetoothServerSocket tmp = null;
-            try {
-                // MY_UUID is the app's UUID string, also used by the client code.
-                tmp = mBluetoothAdapter.listenUsingRfcommWithServiceRecord("Drumsticks", DEFAULT_UUID);
-                Log.e("listening","rfcommwithservicerecord");
-            } catch (IOException e) {
-                e.getStackTrace();
-            }
-            mmServerSocket = tmp;
-        }
-
-        public void run() {
-            BluetoothSocket socket = null;
-            // Keep listening until exception occurs or a socket is returned.
-            while (true) {
-                try {
-                    Log.e("b4","socket accepting");
-                    connectionStatus = 0;
-                    socket = mmServerSocket.accept();
-                    Log.e("waiting to accept",socket.toString());
-                } catch (IOException e) {
-                    Log.e("in IO",e.toString());
-                    e.getStackTrace();
-                    break;
-                }
-
-                if (socket != null) {
-                    // A connection was accepted. Perform work associated with
-                    // the connection in a separate thread.
-                    Log.e("socket not null","start");
-                    connectionStatus = 5;
-                    new ConnectedThread(socket).start();
-                    try {
-                        mmServerSocket.close();
-                        Log.e("closed socket","hqwert");
-                    }
-                    catch (IOException e){
-                        e.getStackTrace();
-                    }
-                    break;
-                }
-            }
-        }
-
-        // Closes the connect socket and causes the thread to finish.
-        public void cancel() {
-            try {
-                mmServerSocket.close();
-            } catch (IOException e) {
-                Log.e(TAG, "Could not close the connect socket", e);
-            }
-        }
+     private BluetoothSocket createBluetoothSocket(BluetoothDevice device) throws IOException {
+         if(Build.VERSION.SDK_INT >= 10){
+             try {
+                 final Method m = device.getClass().getMethod("createInsecureRfcommSocketToServiceRecord", new Class[] { UUID.class });
+                 return (BluetoothSocket) m.invoke(device,DEFAULT_UUID);
+             } catch (Exception e) {
+                 Log.e("SORRY", "Could not create Insecure RFComm Connection",e);
+             }
+         }
+         return  device.createRfcommSocketToServiceRecord(DEFAULT_UUID);
+     }
 
 
-
-
-
-        public class ConnectedThread extends Thread {
+        private class ConnectedThread extends Thread {
             private final BluetoothSocket mmSocket;
             private final InputStream mmInStream;
             private byte[] mmBuffer;
@@ -213,12 +155,12 @@ public class mediaPlayer extends AppCompatActivity {
                         numBytes = mmInStream.read(mmBuffer);
                         String myInput = new String(mmBuffer);
                         data.alpha = myInput.charAt(0);
-                        mediaPlayer.play(myInput.charAt(0),mySoundPool);
+                        mediaPLayerArduino.play(myInput.charAt(0),mySoundPool);
                         Log.e("inputValue", Character.toString(data.alpha));
                         Log.e("Received", Integer.toString(numBytes));
 
                     } catch (IOException e) {
-                        Log.d(TAG, "Input stream was disconnected", e);
+                        Log.e("IN exception", "Input stream was disconnected", e);
                         break;
                     }
                 }
@@ -230,11 +172,13 @@ public class mediaPlayer extends AppCompatActivity {
                     mmSocket.close();
                     Log.e("HERE IT IS CALLE","remove");
                 } catch (IOException e) {
-                    Log.e(TAG, "Could not close the connect socket", e);
+                    Log.e("HELLO", "Could not close the connect socket", e);
                 }
             }
         }
+
+
     }
 
-}
+
 

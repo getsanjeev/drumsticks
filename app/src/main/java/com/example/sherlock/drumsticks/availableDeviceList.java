@@ -48,7 +48,7 @@ public class availableDeviceList extends AppCompatActivity {
         createServer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(availableDeviceList.this,mediaPlayer.class));
+                startActivity(new Intent(availableDeviceList.this,NewActivity.class));
             }
         });
         symbolBluetooth = BitmapFactory.decodeResource(getResources(), R.drawable.bluetooth);
